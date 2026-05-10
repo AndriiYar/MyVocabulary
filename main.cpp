@@ -1,6 +1,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
+
+
 
 struct strtWords{
     std::string engWord;
@@ -43,9 +46,41 @@ void showWords(const std ::vector<strtWords>& words) {
                 }
         }
     }
+
+void saveWordstoCSV (const std::vector<strtWords>& words)
+    {
+        std::ofstream file("vocabularystore.csv");
+        for(const strtWords& word : words)
+        {
+            file << word.engWord << " - " << word.uaWord << std::endl;
+        }   
+    }
+
+void loadwordsfromCSV(std::vector<strtWords>& words) 
+    {
+        std::ifstream file("vocabularystore.csv");
+        if(!file)
+        {
+            return;
+        }
+
+        std::string engWord;
+        std::string uaWord;
+
+        while (std ::getline (file, engWord, '-') && std::getline(file, uaWord))
+        {
+            strtWords word;
+            word.engWord = engWord;
+            word.uaWord = uaWord;
+
+            words.push_back(word);
+        }
+
+    }
 int main() {
     std::string word;
     std::vector<strtWords> words;
+    loadwordsfromCSV(words);
     int menuPoint = 0;
 
      while(menuPoint !=3){
@@ -59,6 +94,7 @@ int main() {
 
         if (menuPoint == 1){
             addWords(words);
+            saveWordstoCSV(words);
         }
         else if (menuPoint == 2){
             showWords(words);
