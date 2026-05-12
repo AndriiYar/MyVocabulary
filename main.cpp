@@ -17,21 +17,52 @@ void showMenu() {
     std::cout << "Enter your choice : ";
     }
 
-void addWords(std::vector<strtWords>& words) {
+bool wordExists(const std::vector<strtWords>& words, const std::string& word) 
+{
+    for (const strtWords& savedWord : words) {
+        if (savedWord.engWord == word) 
+        {
+            return true;
+        }
+    }
+    return false;
+}
+void addWords(std::vector<strtWords>& words) 
+{
     std::string word;
     std::cout << "Enter a English word or 'exit' for exit): ";
     std::cin >> word;
-    while (word != "exit") 
+    while (word != "exit")
+    {
+    if (word.empty())
         {
-        strtWords newWord;
-        newWord.engWord = word;
-        newWord.uaWord = "";
-        words.push_back(newWord);
+        std::cout << "Word cannot be empty!" << std::endl;
+        continue;
+        }
+    if (wordExists(words, word)) {
+        std::cout << "This word already adds!" << std::endl;
+        std ::cout << "Enter a English word or 'exit' for exit): ";
+        std::cin >> word;
+        continue;
+        }
+    strtWords newWord;
+    newWord.engWord = word;
+    std::cout << "Enter a Ukrainian word: ";
+    std::cin >> newWord.uaWord;
+
+    if (newWord.uaWord.empty())
+        {
+        std::cout << "Translation cannot be empty!" << std::endl;
+        std::cin >> word;
+        continue;
+        }
+      words.push_back(newWord);
         std::cout << "Word added!" << std::endl;
+        
         std::cout << "Enter a English nextword or type 'exit' to return to menu : ";
         std::cin >> word;
-        }
     }
+}
 
 void showWords(const std ::vector<strtWords>& words) {
     if(words.empty())
@@ -78,7 +109,6 @@ void loadwordsfromCSV(std::vector<strtWords>& words)
 
     }
 int main() {
-    std::string word;
     std::vector<strtWords> words;
     loadwordsfromCSV(words);
     int menuPoint = 0;
