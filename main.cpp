@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <random>
 
 
 
@@ -14,6 +15,8 @@ void showMenu() {
     std::cout << "1 - Add word! " << std::endl;
     std::cout << "2 - View vocabulary!" << std::endl;
     std::cout << "3 - Exit!" << std::endl;
+    std::cout << "4 - Test yourself!" << std::endl;
+    std::cout << "5 - Clear vocabulary!" << std::endl;
     std::cout << "Enter your choice : ";
     }
 
@@ -97,7 +100,7 @@ void removetrailingSpaces(std::string& str)
             str.pop_back();
         }
     }
-void loadwordsfromCSV(std::vector<strtWords>& words) 
+void loadwordsfromCSV(std::vector<strtWords>& words)
     {
         std::ifstream file("vocabularystore.csv");
         if(!file)
@@ -111,6 +114,7 @@ void loadwordsfromCSV(std::vector<strtWords>& words)
         while (std ::getline (file, engWord, '-') && std::getline(file, uaWord))
         {
             removetrailingSpaces(engWord);
+            removetrailingSpaces(uaWord);
             strtWords word;
             word.engWord = engWord;
             word.uaWord = uaWord;
@@ -119,7 +123,37 @@ void loadwordsfromCSV(std::vector<strtWords>& words)
         }
 
     }
-int main() {
+void testYourself(const std::vector<strtWords>& words) 
+    {
+    if (words.empty())
+        {
+            std::cout << "Vocabulary is empty!" << std::endl;
+            return;
+        }
+
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dist(0, words.size() - 1);
+
+        int index = dist(gen);
+
+        std::string answer;
+
+        std::cout << "Translate this word: " << words[index].engWord << std::endl;
+        std::cout << "Your answer: ";
+        std::cin >> answer;
+
+    if (answer == words[index].uaWord)
+        {
+            std::cout << "Correct!" << std::endl;
+        }
+    else
+        {
+            std::cout << "Wrong. Correct answer: " << words[index].uaWord << std::endl;
+        }
+    }
+int main()
+{
     std::vector<strtWords> words;
     loadwordsfromCSV(words);
     int menuPoint = 0;
@@ -128,8 +162,8 @@ int main() {
 
         showMenu();
         std::cin >> menuPoint;
-        if (menuPoint < 1 || menuPoint > 3){
-            std::cout << "Invalid choice! Please enter a number between 1 and 3." << std::endl;
+        if (menuPoint < 1 || menuPoint > 5){
+            std::cout << "Invalid choice! Please enter a number between 1 and 5." << std::endl;
             return 1;
         }
 
@@ -137,11 +171,23 @@ int main() {
             addWords(words);
             saveWordstoCSV(words);
         }
-        else if (menuPoint == 2){
+        else if (menuPoint == 2)
+        {
             showWords(words);
         }
-        else if (menuPoint == 3){
+        else if (menuPoint == 3)
+        {
         std::cout << "Exiting..." << std::endl;
+        }
+        else if (menuPoint == 4)
+        {
+            testYourself(words);
+        }
+        else if (menuPoint == 5)
+        {
+            words.clear();
+            saveWordstoCSV(words);
+            std::cout << "Vocabulary cleared!" << std::endl;
         }
     }
 return 0;
